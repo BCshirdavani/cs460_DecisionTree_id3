@@ -11,6 +11,10 @@ Created on Tue Oct  9 13:10:10 2018
 import pandas as pd
 import os
 import numpy as np
+import math
+
+pd.set_option('display.max_columns', None)
+pd.set_option('expand_frame_repr', False)
 
 #============================================================================
 #----------------------------------------------------------   import the data
@@ -39,7 +43,9 @@ ageBins = [18, 27, 33, 42, 100]
 ageLabels = ['19-27', '27-33', '33-42', '42-100']
 df2['ageBin'] = pd.cut(df['age'], bins=ageBins, labels=ageLabels)
 # bucket the months_loan_duration bins
-df2['months_loan_duration'] = df2['months_loan_duration'].astype(str)
+mDurBins = [0, 12, 18, 24, 100]
+mDurLabels = ['0-12', '12-18', '18-24', '24-100']
+df2['monDurBin'] = pd.cut(df['months_loan_duration'], bins=mDurBins, labels=mDurLabels)
 # bucket the amount bins
 amtBins = [1, 1360, 2320, 3970, 20000]
 amtLabels = ['1-1360', '1360-2320', '2320-243970' ,'3970-20000']
@@ -65,15 +71,54 @@ dfTrain.describe()
 dfTest.describe()
 
 #============================================================================
-#----------------------------------------------------------     ...
+#----------------------------------------------------------     Define Attributes and Target
+# use all columns, except for amt and age. These ones are continuous, we only want to use the discrete bins
+attributes = ['checking_balance', 'credit_history', 'purpose', 'savings_balance', 'employment_duration', 'percent_of_income', 'years_at_residence', 'other_credit', 'housing', 'existing_loans_count', 'job', 'dependents', 'ageBin', 'amtBin', 'monDurBin']
+target = 'default'
+
+#============================================================================
+#----------------------------------------------------------     explore data...
+for x in attributes:
+    print(x, ': ')
+    for w in df2[x].unique():
+        print('\t',w)
+df2.head()
 
 
 
+#============================================================================
+#----------------------------------------------------------     Entropy Function
+
+def entropy(df, targAttr = 'default'):
+    label_freq = {}
+    data_entropy = 0.0
+    # x = 0
+    for x in range(0,len(df.index)):
+        if(df[targAttr][x] in label_freq):
+            label_freq[df[targAttr][x]] += 1.0
+        else:
+            label_freq[df[targAttr][x]] = 1.0
+    for freq in label_freq.values():
+        data_entropy += (-freq/len(df)) * math.log(freq/len(df), 2)
+    return data_entropy
+
+#----------------------------------------------------------     manual test of Entropy() on df2
+entropy(df2)
+yesCount = 0
+noCount = 0
+for x in range(0,len(df2.index)):
+    if(df['default'][x] == 'yes'):
+        yesCount += 1
+    if(df['default'][x] == 'no'):
+        noCount +=1
+print('yes = ', yesCount, '\tno = ', noCount)
+pYes = yesCount / (yesCount + noCount)
+pNo = noCount / (yesCount + noCount)
+manualEntropy = -(pYes * math.log2(pYes)) - (pNo * math.log2(pNo))
+print('manual entropy = ', manualEntropy)
 
 
-
-
-
-
+#============================================================================
+#----------------------------------------------------------     Gain Function
 
 
