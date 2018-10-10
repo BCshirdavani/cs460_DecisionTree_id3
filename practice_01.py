@@ -92,12 +92,13 @@ df2.head()
 def entropy(df, targAttr = 'default'):
     label_freq = {}
     data_entropy = 0.0
-    # x = 0
+    # put label value counts into dictionary
     for x in range(0,len(df.index)):
         if(df[targAttr][x] in label_freq):
             label_freq[df[targAttr][x]] += 1.0
         else:
             label_freq[df[targAttr][x]] = 1.0
+    # calculate entropy
     for freq in label_freq.values():
         data_entropy += (-freq/len(df)) * math.log(freq/len(df), 2)
     return data_entropy
@@ -120,5 +121,39 @@ print('manual entropy = ', manualEntropy)
 
 #============================================================================
 #----------------------------------------------------------     Gain Function
+def gain(df, attribute, targetAttr = 'default'):
+    print('\tattribute = ', attribute)
+    print('\ttargetAttr = ', targetAttr)
+    attribute_freq = {}
+    subset_entropy = 0.0
+    # put attribute value counts into dictionary
+    for x in range(0, len(df.index)):
+        if(df[attribute][x] in attribute_freq):
+            attribute_freq[df[attribute][x]] += 1.0
+        else:
+            attribute_freq[df[attribute][x]] = 1.0
+    # calculate subset entropies
+    for attr in attribute_freq.keys():
+        attr_prob = attribute_freq[attr] / sum(attribute_freq.values())
+        subsetMask = df[attribute] == attr
+        data_subset = df[subsetMask]
+        subset_entropy += attr_prob * entropy(data_subset, targetAttr)
+    # calculate gain
+    return (entropy(data, targetAttr) - subset_entropy)
 
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
