@@ -253,39 +253,32 @@ def makeTree(data, attributes, target, recursion):
     # id dataset is empty, or attributes list is empty -> return default
     if ((len(data.index)) <=0) or ((len(attributes)) <= 0):
         return default
-    
-
-    # If all the records in the dataset have the same classification,
-    # return that classification.
-    elif vals.count(vals[0]) == len(vals):
-        return vals[0]
-    
+    # if all records in subset show the same classification, return that label
+    # checking if only 1 unique value exists in target col
+    elif (len(df[target].unique())) == 1:
+        onlyValue = df[target].unique()[0]
+        return onlyValue
     else:
-        # Choose the next best attribute to best classify our data
-        best = chooseAttr(data, attributes, target)
-        # Create a new decision tree/node with the best attribute and an empty
-        # dictionary object--we'll fill that up next.
+        # choose next best attribute to label data
+        print('\t\tpassing ', target, ' to best()')
+        best = getMaxGainAttr(data, target)                                     # target = 'default'
+        # create new tree with best attribute as root
         tree = {best:{}}
-    
-        # Create a new decision tree/sub-node for each of the values in the
-        # best attribute field
-        for val in getValues(data, attributes, best):
-            # Create a subtree for the current value under the "best" field
-            examples = getExamples(data, attributes, best, val)
+        # create subtree for each value in best attribute field
+        for val in getValues(data, best):
+            # create subtree for this current value
+            examples = getExampleSubset(data, best, val)
             newAttr = attributes[:]
             newAttr.remove(best)
             subtree = makeTree(examples, newAttr, target, recursion)
-    
-            # Add the new subtree to the empty dictionary object in our new
-            # tree/node we just created.
+            # add the new subtree to the empty dictionary with root from earlier
             tree[best][val] = subtree
-    
     return tree
 
 
 
 
-    
+myTree = makeTree(dfTest, attributes, 'default', 0)
     
     
 
