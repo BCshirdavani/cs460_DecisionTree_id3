@@ -153,22 +153,70 @@ def getMaxGainAttr(df, attributes):
     return maxGainAttribute
 
 
+#============================================================================
+#----------------------------------------------------------     return majority value method
+def majority(df, target = 'default'):
+    values = {'yes':0, 'no':0}                                  # This will only work for yes/no target values
+    for x in range(0, len(df.index)):
+        values[(df[target][x])] += 1.0
+    maxVal = max(values, key=values.get)
+    print('values[yes] = ', values['yes'])
+    print('values[no] = ', values['no'])
+    return maxVal
+        
+
+
+#============================================================================
+#----------------------------------------------------------     getValues method
+def getValues(df, attribute):
+    values = []
+    values = df[attribute].unique()
+    return values
+
+
+
+
+#============================================================================
+#----------------------------------------------------------     define Node for tree
+class Node:
+    value = ""
+    children = []
+    
+    def __init__(self, val, dictionary):
+        self.setValue(val)
+        self.genChildren(dictionary)
+    
+    def __str__(self):
+        return str(self.value)
+    
+    def setValue(self, val):
+        self.value = val
+        
+    def genChildren(self, dictionary):
+        if(isinstance(dictionary, dict)):
+            self.children = dictionary.keys()
+        
+
+
+
 
 #============================================================================
 #----------------------------------------------------------     Tree Function
-def tree(dataIN, attributesIN, target = 'default', recursion = 0):
+def tree(dataIN, attributesIN, dictIN, target = 'default', recursion = 0):
     # if no more attributes
     #   ...
     # if all records in data have same label
     #   return that label
     #
-    if len(attributesIN) >= 1:                                  # if we still have attributes listed
+    dict = dictIN
+    if len(dataIN.index) > 1:                                  # if we still have attributes listed
         rec = recursion + 1
         attributes = attributesIN[:]
         df = dataIN
         maxAttr = getMaxGainAttr(df, attributes)                # find max gain attribute
         newAttr = attributes[:]
         newAttr.remove(maxAttr)                                    # remove attribute for next recurssion
+        dict[rec] += ' ' + maxAttr
         print('\t\t\tnewAttr = ',newAttr)
         print('\trecursion ', rec, ' attribute with most gain is', maxAttr, 'with gain of', gain(df, attribute = maxAttr))
         for attr in df[maxAttr].unique():                       # for each version in max attribute
@@ -177,15 +225,21 @@ def tree(dataIN, attributesIN, target = 'default', recursion = 0):
             subset_df = df[mask]
             subset_df = subset_df.reset_index(drop=True)
             if len(newAttr) >= 1:
-                tree(dataIN = subset_df, attributesIN = newAttr, target = 'default', recursion = rec)
+                tree(dataIN = subset_df, attributesIN = newAttr, target = 'default', recursion = rec, dictIN = dict)
             else:
                 print('\n\n\t\t\trecursion:',rec)
+                return dict
+    else:
+        return dict
         
     
     
     
-    
-tree(dfTrain, attributes)
+dict = {1:'_', 2:'_', 3:'_', 4:'_', 5:'_', 6:'_', 7:'_', 8:'_', 9:'_', 10:'_',11:'_', 12:'_', 13:'_', 14:'_', 15:'_',16:'_', 17:'_'}
+testingDictionary = tree(dfTest, attributes, dictIN = dict)
+print(testingDictionary)
+
+
 
 attributes
 len(attributes) 
