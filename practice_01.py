@@ -68,7 +68,7 @@ mskTrain = np.random.rand(len(df2)) > 0.1
 dfTrain = df2[mskTrain]
 dfTest = df2[~mskTrain]
 dfTrain = dfTrain.reset_index(drop=True)
-fTest = dfTest.reset_index(drop=True)
+dfTest = dfTest.reset_index(drop=True)
 dfTrain.describe()
 dfTest.describe()
 
@@ -154,6 +154,25 @@ def tree(df, attributes, target):
     
     
     
+
+
+#============================================================================
+#----------------------------------------------------------     getMax function
+def getMaxGainAttr(df, attributes): 
+    testDict = {}
+    for x in attributes:
+        testDict[x] = gain(df, attribute = x, targetAttr = 'default')
+    maxGainAttribute = max(testDict, key=testDict.get)
+    return maxGainAttribute
+
+
+
+
+
+
+    
+    
+    
 #============================================================================
 #----------------------------------------------------------     testing
 # printing the gains for all attributes
@@ -161,9 +180,7 @@ for x in attributes:
     # print(x, ' gain:\t', gain(dfTrain, attribute = x, targetAttr = 'default'))
     print("{: >20} {: >6} {: >10}".format(x, 'gain:', gain(dfTrain, attribute = x, targetAttr = 'default')))
 
-
-    
-    
+getMaxGainAttr(dfTest, attributes)
     
     
     
