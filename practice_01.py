@@ -175,6 +175,17 @@ def getValues(df, attribute):
 
 
 
+#============================================================================
+#----------------------------------------------------------     getExamples method
+def getExampleSubset(data, bestAttr, val):
+    mask = data[bestAttr] == val
+    examples = data[mask]
+    examples.reset_index(drop=True)
+    return examples
+
+
+
+
 
 #============================================================================
 #----------------------------------------------------------     define Node for tree
@@ -202,57 +213,74 @@ class Node:
 
 #============================================================================
 #----------------------------------------------------------     Tree Function
-def tree(dataIN, attributesIN, dictIN, target = 'default', recursion = 0):
-    # if no more attributes
-    #   ...
-    # if all records in data have same label
-    #   return that label
-    #
-    dict = dictIN
-    if len(dataIN.index) > 1:                                  # if we still have attributes listed
-        rec = recursion + 1
-        attributes = attributesIN[:]
-        df = dataIN
-        maxAttr = getMaxGainAttr(df, attributes)                # find max gain attribute
-        newAttr = attributes[:]
-        newAttr.remove(maxAttr)                                    # remove attribute for next recurssion
-        dict[rec] += ' ' + maxAttr
-        print('\t\t\tnewAttr = ',newAttr)
-        print('\trecursion ', rec, ' attribute with most gain is', maxAttr, 'with gain of', gain(df, attribute = maxAttr))
-        for attr in df[maxAttr].unique():                       # for each version in max attribute
-            print('\t\t',attr)
-            mask = df[maxAttr] == attr                               # subset df for recurssion
-            subset_df = df[mask]
-            subset_df = subset_df.reset_index(drop=True)
-            if len(newAttr) >= 1:
-                tree(dataIN = subset_df, attributesIN = newAttr, target = 'default', recursion = rec, dictIN = dict)
-            else:
-                print('\n\n\t\t\trecursion:',rec)
-                return dict
-    else:
-        return dict
+# def tree(dataIN, attributesIN, dictIN, target = 'default', recursion = 0):
+#     # if no more attributes
+#     #   ...
+#     # if all records in data have same label
+#     #   return that label
+#     #
+#     dict = dictIN
+#     if len(dataIN.index) > 1:                                  # if we still have attributes listed
+#         rec = recursion + 1
+#         attributes = attributesIN[:]
+#         df = dataIN
+#         maxAttr = getMaxGainAttr(df, attributes)                # find max gain attribute
+#         newAttr = attributes[:]
+#         newAttr.remove(maxAttr)                                    # remove attribute for next recurssion
+#         dict[rec] += ' ' + maxAttr
+#         print('\t\t\tnewAttr = ',newAttr)
+#         print('\trecursion ', rec, ' attribute with most gain is', maxAttr, 'with gain of', gain(df, attribute = maxAttr))
+#         for attr in df[maxAttr].unique():                       # for each version in max attribute
+#             print('\t\t',attr)
+#             mask = df[maxAttr] == attr                               # subset df for recurssion
+#             subset_df = df[mask]
+#             subset_df = subset_df.reset_index(drop=True)
+#             if len(newAttr) >= 1:
+#                 tree(dataIN = subset_df, attributesIN = newAttr, target = 'default', recursion = rec, dictIN = dict)
+#             else:
+#                 print('\n\n\t\t\trecursion:',rec)
+#                 return dict
+#     else:
+#         return dict
         
     
     
+
+def makeTree(data, attributes, target, recursion):
+    recursion += 1
+    data = data[:]
+    default = majority(data, target)
+    # id dataset is empty, or attributes list is empty -> return default
+    if ((len(data.index)) <=0) or ((len(attributes)) <= 0):
+        return default
     
-dict = {1:'_', 2:'_', 3:'_', 4:'_', 5:'_', 6:'_', 7:'_', 8:'_', 9:'_', 10:'_',11:'_', 12:'_', 13:'_', 14:'_', 15:'_',16:'_', 17:'_'}
-testingDictionary = tree(dfTest, attributes, dictIN = dict)
-print(testingDictionary)
 
-
-
-attributes
-len(attributes) 
-attrTest = attributes[:]
-attrTest.remove('monDurBin')    
-attrTest    
-len(attrTest)
-len(attributes)
-attributes
-
-
-attributes[0]
-
+    # If all the records in the dataset have the same classification,
+    # return that classification.
+    elif vals.count(vals[0]) == len(vals):
+        return vals[0]
+    
+    else:
+        # Choose the next best attribute to best classify our data
+        best = chooseAttr(data, attributes, target)
+        # Create a new decision tree/node with the best attribute and an empty
+        # dictionary object--we'll fill that up next.
+        tree = {best:{}}
+    
+        # Create a new decision tree/sub-node for each of the values in the
+        # best attribute field
+        for val in getValues(data, attributes, best):
+            # Create a subtree for the current value under the "best" field
+            examples = getExamples(data, attributes, best, val)
+            newAttr = attributes[:]
+            newAttr.remove(best)
+            subtree = makeTree(examples, newAttr, target, recursion)
+    
+            # Add the new subtree to the empty dictionary object in our new
+            # tree/node we just created.
+            tree[best][val] = subtree
+    
+    return tree
 
 
 
@@ -260,15 +288,7 @@ attributes[0]
     
     
     
-#============================================================================
-#----------------------------------------------------------     testing
-# printing the gains for all attributes
-for x in attributes:
-    # print(x, ' gain:\t', gain(dfTrain, attribute = x, targetAttr = 'default'))
-    print("{: >20} {: >6} {: >10}".format(x, 'gain:', gain(dfTrain, attribute = x, targetAttr = 'default')))
 
-getMaxGainAttr(dfTest, attributes)
-    
     
     
 
