@@ -169,13 +169,17 @@ def tree(dataIN, attributesIN, target = 'default', recursion = 0):
         maxAttr = getMaxGainAttr(df, attributes)                # find max gain attribute
         newAttr = attributes[:]
         newAttr.remove(maxAttr)                                    # remove attribute for next recurssion
+        print('\t\t\tnewAttr = ',newAttr)
         print('\trecursion ', rec, ' attribute with most gain is', maxAttr, 'with gain of', gain(df, attribute = maxAttr))
         for attr in df[maxAttr].unique():                       # for each version in max attribute
             print('\t\t',attr)
             mask = df[maxAttr] == attr                               # subset df for recurssion
             subset_df = df[mask]
             subset_df = subset_df.reset_index(drop=True)
-            tree(subset_df, newAttr, rec)
+            if len(newAttr) >= 1:
+                tree(dataIN = subset_df, attributesIN = newAttr, target = 'default', recursion = rec)
+            else:
+                print('\n\n\t\t\trecursion:',rec)
         
     
     
@@ -183,14 +187,14 @@ def tree(dataIN, attributesIN, target = 'default', recursion = 0):
     
 tree(dfTrain, attributes)
 
-# attributes
-# len(attributes) 
-# attrTest = attributes[:]
-# attrTest.remove('monDurBin')    
-# attrTest    
-# len(attrTest)
-# len(attributes)
-# attributes
+attributes
+len(attributes) 
+attrTest = attributes[:]
+attrTest.remove('monDurBin')    
+attrTest    
+len(attrTest)
+len(attributes)
+attributes
 
 
 attributes[0]
