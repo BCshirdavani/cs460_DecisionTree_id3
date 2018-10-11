@@ -14,7 +14,7 @@ import numpy as np
 import math
 
 pd.set_option('display.max_columns', None)
-pd.set_option('expand_frame_repr', False)
+# pd.set_option('expand_frame_repr', False)
 
 #============================================================================
 #----------------------------------------------------------   import the data
@@ -144,27 +144,56 @@ def gain(df, attribute, targetAttr = 'default'):
 
 
 #============================================================================
-#----------------------------------------------------------     Tree Function
-def tree(df, attributes, target):
-    ...
-    
-    
+#----------------------------------------------------------     getMax function
+def getMaxGainAttr(df, attributes): 
+    gainDict = {}
+    for x in attributes:
+        gainDict[x] = gain(df, attribute = x, targetAttr = 'default')
+    maxGainAttribute = max(gainDict, key=gainDict.get)
+    return maxGainAttribute
 
-    
-    
-    
-    
 
 
 #============================================================================
-#----------------------------------------------------------     getMax function
-def getMaxGainAttr(df, attributes): 
-    testDict = {}
-    for x in attributes:
-        testDict[x] = gain(df, attribute = x, targetAttr = 'default')
-    maxGainAttribute = max(testDict, key=testDict.get)
-    return maxGainAttribute
+#----------------------------------------------------------     Tree Function
+def tree(dataIN, attributesIN, target = 'default', recursion = 0):
+    # if no more attributes
+    #   ...
+    # if all records in data have same label
+    #   return that label
+    #
+    if len(attributesIN) >= 1:                                  # if we still have attributes listed
+        rec = recursion + 1
+        attributes = attributesIN[:]
+        df = dataIN
+        maxAttr = getMaxGainAttr(df, attributes)                # find max gain attribute
+        newAttr = attributes[:]
+        newAttr.remove(maxAttr)                                    # remove attribute for next recurssion
+        print('\trecursion ', rec, ' attribute with most gain is', maxAttr, 'with gain of', gain(df, attribute = maxAttr))
+        for attr in df[maxAttr].unique():                       # for each version in max attribute
+            print('\t\t',attr)
+            mask = df[maxAttr] == attr                               # subset df for recurssion
+            subset_df = df[mask]
+            subset_df = subset_df.reset_index(drop=True)
+            tree(subset_df, newAttr, rec)
+        
+    
+    
+    
+    
+tree(dfTrain, attributes)
 
+# attributes
+# len(attributes) 
+# attrTest = attributes[:]
+# attrTest.remove('monDurBin')    
+# attrTest    
+# len(attrTest)
+# len(attributes)
+# attributes
+
+
+attributes[0]
 
 
 
