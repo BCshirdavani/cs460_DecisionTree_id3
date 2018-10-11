@@ -137,10 +137,14 @@ def gain(df, attribute, targetAttr = 'default'):
         attr_prob = attribute_freq[attr] / sum(attribute_freq.values())
         subsetMask = df[attribute] == attr
         data_subset = df[subsetMask]
+        data_subset = data_subset.reset_index(drop=True)
+        print(data_subset.head())
         subset_entropy += attr_prob * entropy(data_subset, targetAttr)
     # calculate gain
-    return (entropy(data, targetAttr) - subset_entropy)
+    return (entropy(df, targetAttr) - subset_entropy)
 
+
+gain(df2, attribute = 'job', targetAttr = 'default')
 
 
     
