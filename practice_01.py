@@ -67,6 +67,8 @@ mskTrain = np.random.rand(len(df2)) > 0.1
 # mskTest = 1 - mskTrain
 dfTrain = df2[mskTrain]
 dfTest = df2[~mskTrain]
+dfTrain = dfTrain.reset_index(drop=True)
+fTest = dfTest.reset_index(drop=True)
 dfTrain.describe()
 dfTest.describe()
 
@@ -122,8 +124,6 @@ print('manual entropy = ', manualEntropy)
 #============================================================================
 #----------------------------------------------------------     Gain Function
 def gain(df, attribute, targetAttr = 'default'):
-    print('\tattribute = ', attribute)
-    print('\ttargetAttr = ', targetAttr)
     attribute_freq = {}
     subset_entropy = 0.0
     # put attribute value counts into dictionary
@@ -138,23 +138,30 @@ def gain(df, attribute, targetAttr = 'default'):
         subsetMask = df[attribute] == attr
         data_subset = df[subsetMask]
         data_subset = data_subset.reset_index(drop=True)
-        print(data_subset.head())
         subset_entropy += attr_prob * entropy(data_subset, targetAttr)
     # calculate gain
     return (entropy(df, targetAttr) - subset_entropy)
 
 
-gain(df2, attribute = 'job', targetAttr = 'default')
+#============================================================================
+#----------------------------------------------------------     Tree Function
+def tree(df, attributes, target):
+    ...
+    
+    
+
+    
+    
+    
+    
+#============================================================================
+#----------------------------------------------------------     testing
+# printing the gains for all attributes
+for x in attributes:
+    # print(x, ' gain:\t', gain(dfTrain, attribute = x, targetAttr = 'default'))
+    print("{: >20} {: >6} {: >10}".format(x, 'gain:', gain(dfTrain, attribute = x, targetAttr = 'default')))
 
 
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     
