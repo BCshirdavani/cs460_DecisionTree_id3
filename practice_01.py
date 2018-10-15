@@ -146,7 +146,6 @@ def gain(df, attribute, targetAttr = 'default'):
 #============================================================================
 #----------------------------------------------------------     getMax function
 def getMaxGainAttr(df, attributes): 
-    print('inside getMaxGain, attributes = ', attributes, '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
     gainDict = {}
     for x in attributes:
         gainDict[x] = gain(df, attribute = x, targetAttr = 'default')
@@ -158,13 +157,10 @@ def getMaxGainAttr(df, attributes):
 #----------------------------------------------------------     return majority value method
 def majority(df, target = 'default'):
     df.reset_index(drop=True)
-    print('\nmajority():\n',df.head())
     values = {'yes':0, 'no':0}                                  # This will only work for yes/no target values
     for x in range(0, len(df.index)):
         values[(df[target][x])] += 1.0
     maxVal = max(values, key=values.get)
-    print('values[yes] = ', values['yes'])
-    print('values[no] = ', values['no'])
     return maxVal
         
 
@@ -263,21 +259,16 @@ def makeTree(data, attributes, target, recursion):
         return onlyValue
     else:
         # choose next best attribute to label data
-        print('\t\tpassing target =', target, ' to best()', '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
         # best = getMaxGainAttr(data, target)                                     # target = 'default'
         best = getMaxGainAttr(data, attributes)  
-        print('best = ', best, '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
         # create new tree with best attribute as root
         tree = {best:{}}
         # create subtree for each value in best attribute field
         for val in getValues(data, best):
-            print('~~~~~~~~~~~~~~~~~~~~~~~ in the tree loop for ', val)
             # create subtree for this current value
             examples = getExampleSubset(data, best, val)
-            print('\nexamples:\n', examples.head())
             newAttr = attributes[:]
             newAttr.remove(best)
-            print('\nnewAttr:', newAttr)
             subtree = makeTree(examples, newAttr, target, recursion)
             # add the new subtree to the empty dictionary with root from earlier
             tree[best][val] = subtree
@@ -290,6 +281,30 @@ myTree = makeTree(dfTest, attributes, 'default', 0)
 
 print(myTree)
 
-    
+# practice dictionary operations for the tree traversal
+len(list(myTree.keys()))
+list(myTree.keys())[0]
+myTree[list(myTree.keys())[0]].keys()
+len(list(myTree[list(myTree.keys())[0]].keys()))
+list(myTree[list(myTree.keys())[0]].keys())[0]
+
+
+myTree.keys()                                                       # root key - root name
+myTree
+myTree[list(myTree.keys())[0]]                                      # root dict
+list(myTree[list(myTree.keys())[0]].keys())                         # root leaves
+atRoot = myTree[list(myTree.keys())[0]]  
+atRoot.keys()
+list(atRoot.keys())
+list(atRoot.keys())[0]
+rootChildren = list(atRoot.keys())
+rootChildren
+atRoot[rootChildren[0]]                                             # left child of root ('1-200' checkin_balance)
+
+
+
+
+
+
     
 
