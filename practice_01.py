@@ -14,7 +14,7 @@ import numpy as np
 import math
 
 pd.set_option('display.max_columns', None)
-# pd.set_option('expand_frame_repr', False)
+pd.set_option('expand_frame_repr', False)
 
 #============================================================================
 #----------------------------------------------------------   import the data
@@ -246,18 +246,22 @@ class Node:
     
 
 def makeTree(data, attributes, target, recursion):
+    # print(data[target].unique())
     recursion += 1
     data = data[:]
     default = majority(data, target)
     # id dataset is empty, or attributes list is empty -> return default
     if ((len(data.index)) <=0) or ((len(attributes)) <= 0):
+        print('~~~~~~~~~~~~~~~~~~~~ LEAF: no more data or attributes ~~~~~~~~~~~~~~ 0')
         return default
     # if all records in subset show the same classification, return that label
     # checking if only 1 unique value exists in target col
-    elif (len(df[target].unique())) == 1:
-        onlyValue = df[target].unique()[0]
+    elif (len(data[target].unique())) <= 1:
+        print('~~~~~~~~~~~~~~~~~~~~ LEAF: only 1 unique default value ~~~~~~~~~~~~~~ 1')
+        onlyValue = data[target].unique()[0]
         return onlyValue
     else:
+        print('~~~~~~~~~~~~~~~~~~~~ else: tree recursion ~~~~~~~~~~~~~~ 2')
         # choose next best attribute to label data
         # best = getMaxGainAttr(data, target)                                     # target = 'default'
         best = getMaxGainAttr(data, attributes)  
@@ -311,10 +315,16 @@ atRoot[rootChildren[0]].get('ageBin').get('33-42').get('percent_of_income').get(
 atRoot[rootChildren[0]].get('ageBin').get('33-42').get('percent_of_income').get('2').get('credit_history').get('good').get('purpose').get('car').get('savings_balance')
 atRoot[rootChildren[0]].get('ageBin').get('33-42').get('percent_of_income').get('2').get('credit_history').get('good').get('purpose').get('car').get('savings_balance').get('< 100 DM')
 
+# applying an if statement of the tree to a data frame, to mask the 'no' values of a section from the model
+testNoMask = (dfTest['checking_balance'] == '1 - 200 DM') & (dfTest['ageBin'] == '33-42') & (dfTest['percent_of_income'] == '2') & (dfTest['credit_history'] == 'good') & (dfTest['purpose'] == 'car') & (dfTest['savings_balance'] == '< 100 DM') & (dfTest['employment_duration'] == '1 - 4 years') & (dfTest['years_at_residence'] == '2') & (dfTest['other_credit'] == 'none') & (dfTest['housing'] == 'rent') & (dfTest['existing_loans_count'] == '1') & (dfTest['job'] == 'management') & (dfTest['dependents'] == '1') & (dfTest['amtBin'] == '3970-20000') & (dfTest['monDurBin'] == '24-100')
+dfTest[testNoMask]['default']      # correctly shows no for this 1 instance
+testNoMask.sum()
 
-
-
-
+# tree algo should have stopped recursion after the percent_of_income attribute....
+testNoMaskShorter = (dfTest['checking_balance'] == '1 - 200 DM') & (dfTest['ageBin'] == '33-42') & (dfTest['percent_of_income'] == '2') 
+dfTest[testNoMaskShorter]['default']      # correctly shows no for this 1 instance
+dfTest[testNoMaskShorter]
+testNoMaskShorter.sum()
 
 
 
