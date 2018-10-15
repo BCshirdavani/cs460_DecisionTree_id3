@@ -300,11 +300,22 @@ list(atRoot.keys())[0]
 rootChildren = list(atRoot.keys())
 rootChildren
 atRoot[rootChildren[0]]                                             # left child of root ('1-200' checkin_balance)
+atRoot[rootChildren[0]].get('ageBin')
+atRoot[rootChildren[0]].get('ageBin').get('33-42')
+atRoot[rootChildren[0]].get('ageBin').get('33-42').get('percent_of_income')
+atRoot[rootChildren[0]].get('ageBin').get('33-42').get('percent_of_income').get('2')
+atRoot[rootChildren[0]].get('ageBin').get('33-42').get('percent_of_income').get('2').get('credit_history')    
+atRoot[rootChildren[0]].get('ageBin').get('33-42').get('percent_of_income').get('2').get('credit_history').get('good')
+atRoot[rootChildren[0]].get('ageBin').get('33-42').get('percent_of_income').get('2').get('credit_history').get('good').get('purpose')
+atRoot[rootChildren[0]].get('ageBin').get('33-42').get('percent_of_income').get('2').get('credit_history').get('good').get('purpose').get('car')
+atRoot[rootChildren[0]].get('ageBin').get('33-42').get('percent_of_income').get('2').get('credit_history').get('good').get('purpose').get('car').get('savings_balance')
+atRoot[rootChildren[0]].get('ageBin').get('33-42').get('percent_of_income').get('2').get('credit_history').get('good').get('purpose').get('car').get('savings_balance').get('< 100 DM')
 
 
 
 
 
 
-    
+
+
 
