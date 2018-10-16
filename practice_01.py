@@ -307,13 +307,8 @@ atRoot[rootChildren[0]]                                             # left child
 atRoot[rootChildren[0]].get('ageBin')
 atRoot[rootChildren[0]].get('ageBin').get('33-42')
 atRoot[rootChildren[0]].get('ageBin').get('33-42').get('percent_of_income')
-atRoot[rootChildren[0]].get('ageBin').get('33-42').get('percent_of_income').get('2')
-atRoot[rootChildren[0]].get('ageBin').get('33-42').get('percent_of_income').get('2').get('credit_history')    
-atRoot[rootChildren[0]].get('ageBin').get('33-42').get('percent_of_income').get('2').get('credit_history').get('good')
-atRoot[rootChildren[0]].get('ageBin').get('33-42').get('percent_of_income').get('2').get('credit_history').get('good').get('purpose')
-atRoot[rootChildren[0]].get('ageBin').get('33-42').get('percent_of_income').get('2').get('credit_history').get('good').get('purpose').get('car')
-atRoot[rootChildren[0]].get('ageBin').get('33-42').get('percent_of_income').get('2').get('credit_history').get('good').get('purpose').get('car').get('savings_balance')
-atRoot[rootChildren[0]].get('ageBin').get('33-42').get('percent_of_income').get('2').get('credit_history').get('good').get('purpose').get('car').get('savings_balance').get('< 100 DM')
+print(myTree.keys())
+
 
 # applying an if statement of the tree to a data frame, to mask the 'no' values of a section from the model
 testNoMask = (dfTest['checking_balance'] == '1 - 200 DM') & (dfTest['ageBin'] == '33-42') & (dfTest['percent_of_income'] == '2') & (dfTest['credit_history'] == 'good') & (dfTest['purpose'] == 'car') & (dfTest['savings_balance'] == '< 100 DM') & (dfTest['employment_duration'] == '1 - 4 years') & (dfTest['years_at_residence'] == '2') & (dfTest['other_credit'] == 'none') & (dfTest['housing'] == 'rent') & (dfTest['existing_loans_count'] == '1') & (dfTest['job'] == 'management') & (dfTest['dependents'] == '1') & (dfTest['amtBin'] == '3970-20000') & (dfTest['monDurBin'] == '24-100')
@@ -326,6 +321,74 @@ dfTest[testNoMaskShorter]['default']      # correctly shows no for this 1 instan
 dfTest[testNoMaskShorter]
 testNoMaskShorter.sum()
 
+# traverse practice method
+# list is like a stack, to show the path to the yes leaves
+# def trav(tree, ifList = [], pList = [], path = 0):
+#     print('~~~~~~tree keys: ', tree.keys())
+#     children = list(tree.keys())
+#     for x in range(0, len(children)):
+#         if children != None:
+#             if (tree.get(children[x]) != 'yes') & (tree.get(children[x]) != 'no'):
+#                 print('~~~~appending', children[x], 'to temp list')
+#                 ifList.append(children[x])                  # append this child to the ifList
+#                 trav(tree.get(children[x]),ifList)      # pass new ifList to the next sub traversal
+#             elif (tree.get(children[x]) == 'yes'):
+#                 print('~~~~leaf at YES...add to permanent path list')
+#                 tString = ''
+#                 for x in ifList:
+#                     tString = x + ' '
+#                 print('tString = ', tString)
+#                 pList.append(tString)
+#                 path += 1
+#             elif (tree.get(children[x]) == 'no'):
+#                 print('~~~~leaf at no...pop path')
+#                 ifList.pop()
+#     return pList
 
+# paths = trav(myTree)         
+# paths
+            
+class Traverse:
+    def __init__(self, dicIN):
+        self.treeDic = dicIN
+        self.path = 0
+        self.tempList = []
+        self.pathList = []
+        
+    def traverse(self, tree):
+        print('~~~~~~tree keys: ', tree.keys())
+        children = list(tree.keys())
+        for x in range(0, len(children)):
+            if children != None:
+                if (tree.get(children[x]) != 'yes') & (tree.get(children[x]) != 'no'):
+                    print('~~~~appending', children[x], 'to temp list')
+                    self.tempList.append(children[x])                  # append this child to the ifList
+                    print('\ttempList = ', self.tempList)
+                    # traverse(tree = tree.get(children[x]))             # sub tree traversal
+                    self.traverse(tree = tree.get(children[x])) 
+                elif (tree.get(children[x]) == 'yes'):
+                    print('~~~~leaf at YES...add to permanent path list, and pop() temp path')
+                    self.tempList.append(children[x])       # NEW
+                    tempString = ''
+                    #------------------------------------------------------------ parse if conditions here ----------
+                    for x in self.tempList:
+                        tempString += (x + ' ')
+                    print('v^v^v^v^\tTemp String = ', tempString)
+                    self.pathList.append(tempString)                    # save this path in the list of permanent paths
+                    self.path += 1                                      # +1 to path counter
+                    if len(self.tempList) < 1:
+                        self.tempList.pop()                                 # pop and backtrack temp path
+                elif (tree.get(children[x]) == 'no'):
+                    print('~~~~leaf at no...pop() back')
+                    self.tempList.pop()                                 # pop and backtrack temp path
+        print('\n~*~*~*~*~* RETURNING LIST ~*~*~*~')
 
+        
+        
+    
+testPath = Traverse(myTree)
+testPath.traverse(myTree)   
+testPath.pathList
+testPath.path
+        
 
