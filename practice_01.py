@@ -19,7 +19,10 @@ pd.set_option('expand_frame_repr', False)
 #============================================================================
 #----------------------------------------------------------   import the data
 print(os.getcwd())
-df = pd.read_csv('/Users/shymacbook/Documents/BC/cs460_ML/HW/cs460_DecisionTree_id3/credit.csv')
+# MacBook
+#df = pd.read_csv('/Users/shymacbook/Documents/BC/cs460_ML/HW/cs460_DecisionTree_id3/credit.csv')
+# iMac
+df = pd.read_csv('/Users/shimac/Documents/ComputerSci/cs460_ML/hw01/cs460_DecisionTree_id3/credit.csv')
 
 #============================================================================
 # ----------------------------------------------------------  check out the data
@@ -37,7 +40,9 @@ df.age.unique()
 
 #============================================================================
 #----------------------------------------------------------   bucket the continuous variables
-df2 = pd.read_csv('/Users/shymacbook/Documents/BC/cs460_ML/HW/cs460_DecisionTree_id3/credit.csv')
+#df2 = pd.read_csv('/Users/shymacbook/Documents/BC/cs460_ML/HW/cs460_DecisionTree_id3/credit.csv')
+# iMac
+df2 = pd.read_csv('/Users/shimac/Documents/ComputerSci/cs460_ML/hw01/cs460_DecisionTree_id3/credit.csv')
 # bucket the age bins
 ageBins = [18, 27, 33, 42, 100]
 ageLabels = ['19-27', '27-33', '33-42', '42-100']
@@ -354,41 +359,64 @@ class Traverse:
         self.path = 0
         self.tempList = []
         self.pathList = []
+        self.rulesList = []
         
     def traverse(self, tree):
-        print('~~~~~~tree keys: ', tree.keys())
+#        print('~~~~~~tree keys: ', tree.keys())
         children = list(tree.keys())
         for x in range(0, len(children)):
             if children != None:
+#            if (children != None) & (self.path < 1):
                 if (tree.get(children[x]) != 'yes') & (tree.get(children[x]) != 'no'):
-                    print('~~~~appending', children[x], 'to temp list')
+#                    print('~~~~appending', children[x], 'to temp list')
                     self.tempList.append(children[x])                  # append this child to the ifList
-                    print('\ttempList = ', self.tempList)
+#                    print('\ttempList = ', self.tempList)
                     # traverse(tree = tree.get(children[x]))             # sub tree traversal
                     self.traverse(tree = tree.get(children[x])) 
                 elif (tree.get(children[x]) == 'yes'):
-                    print('~~~~leaf at YES...add to permanent path list, and pop() temp path')
+#                    print('~~~~leaf at YES...add to permanent path list, and pop() temp path')
                     self.tempList.append(children[x])       # NEW
                     tempString = ''
                     #------------------------------------------------------------ parse if conditions here ----------
+                    # consider using dictionary to mimic a 3d array
+                    # outer dict = rule set
+                    # inside here, put key : val pairs for the attribute : value
+                    #   later we can loop over this, and apply it to a data frame
+                    i = 0
+                    size = len(self.tempList)
                     for x in self.tempList:
+#                        print('~~~~~ x: ', x)
                         tempString += (x + ' ')
-                    print('v^v^v^v^\tTemp String = ', tempString)
+                        if i == 0:
+                            tempString +=
+                        i += 1
+#                    print('v^v^v^v^\tTemp String = ', tempString)
                     self.pathList.append(tempString)                    # save this path in the list of permanent paths
                     self.path += 1                                      # +1 to path counter
                     if len(self.tempList) < 1:
                         self.tempList.pop()                                 # pop and backtrack temp path
                 elif (tree.get(children[x]) == 'no'):
-                    print('~~~~leaf at no...pop() back')
-                    self.tempList.pop()                                 # pop and backtrack temp path
+#                    print('~~~~leaf at no...')
+#                    self.tempList.pop()                                 # pop and backtrack temp path
         print('\n~*~*~*~*~* RETURNING LIST ~*~*~*~')
 
-        
+        # this function will parse the string of conditions into if statement formats
+        # we can use this to apply to columns of the df, to label the predicted outcomes
+        def ifParser(self):
+            for x in range(0, len(self.path)):
+                size = len(self.pathList[x])
+                
+            
         
     
 testPath = Traverse(myTree)
 testPath.traverse(myTree)   
 testPath.pathList
 testPath.path
-        
-
+testPath.pathList[0]
+len(testPath.pathList[0])
+i = 0
+i%2
+0%2
+x = ['b','barg', 'tree']
+len(x)
