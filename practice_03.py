@@ -407,7 +407,6 @@ class Traverse:
         print('\n~*~*~*~*~* RETURNING LIST ~*~*~*~')
 
     # method returns a new data frame with predicted label column
-    #****************************************** ERROR! my rule loop checks for ALL rules to match...needs to break after finding 1 match
     def makeLabels(self, data):
         # initialize a new predicted label col to be all 'no'
         df = data[:]
@@ -416,26 +415,25 @@ class Traverse:
         # for each row, apply every rule
         for rowNum in range(0, len(df)):
             print('at row', rowNum)
-            # check each rule on this row..initialize test bool = True, and becomes false as soon as a condition fails to meet
-            ruleMatch = True
-            failCount = 0
+            ruleMatch = False
+            matchCount = 0
             for rule in rules:
-                # extract an pair attribute value pair
+                print('\tmatches:', matchCount, 'of', len(self.ruleDict[rule].keys()), 'ruleMatch=', ruleMatch)
                 kvPairs = list(testPath.ruleDict[rule].items())
-                # check 1 attribute at a time within this rule, on this row
                 for pair in kvPairs:
-                    print('pair:', pair)
                     testAttr = pair[0]
                     testVal = pair[1]
-                    # if does not match rule values, test is False, and value remains at 'no'
-                    if df[pair[0]][rowNum] != pair[1]:
-#                    if df[testAttr][rowNum] != testVal:
-                        print('\t',df[pair[0]][rowNum], '!=', pair[1])
+                    if df[testAttr][rowNum] != testVal:
                         ruleMatch = False
-            # if ruleMatch is true, this matches the rule path, and we make label = 'yes'
-            if ruleMatch == True:
-                print('\t\ttrue match')
-                df['predict_label'][rowNum] = 'yes'
+                    elif df[testAttr][rowNum] == testVal:
+                        matchCount += 1
+                if matchCount == len(self.ruleDict[rule].keys()):
+                    ruleMatch = True
+                    print('\t\ttrue match')
+                    df['predict_label'][rowNum] = 'yes'
+            if ruleMatch == True:                       # redundant section...remove
+                print('\t\ttrue match')                 # redundant section...remove
+                df['predict_label'][rowNum] = 'yes'     # redundant section...remove
         return df
 
         
@@ -448,6 +446,15 @@ testPath.ruleDict
 testPath.ruleDict[0]
 testPath.ruleDict[1]
 testPath.ruleDict[2]
+len(testPath.ruleDict[0].keys())
+
+
+newDF = testPath.makeLabels(dfTest)             # row 98 shows a match...3 of 3 conditions for one of the rules...
+newDF.tail()
+
+
+
+
 
 
 #==========================================================================
@@ -469,14 +476,14 @@ for rule in rules:
     kvPairs = list(testPath.ruleDict[rule].items())
     for pair in kvPairs:
         print('if', pair[0], ' = ', pair[1])
-        
 
 
-newDF = testPath.makeLabels(dfTrain)
-newDF
-
-
-
-
+#========================================================================== TESTING
+myTree2 = makeTree(dfTrain, attributes, 'default', 0)
+testPath2 = Traverse(myTree2)
+testPath2.traverse(myTree2)   
+testPath2.ruleDict
+newDF2 = testPath2.makeLabels(dfTest) # --- test fails here...KeyError: 18 - makelabels method - kvPairs = list(testPath.ruleDict[rule].items())...previous test had 17 keys
+newDF2 = testPath2.makeLabels(dfTrain)
 
 
