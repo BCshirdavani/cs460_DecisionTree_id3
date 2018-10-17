@@ -487,6 +487,17 @@ newDF2 = testPath2.makeLabels(dfTest)
 newDF2.head()
 newDF2.tail()
 
-
+# accuracy against dfTest
+yesCount = 0
+noCount = 0
+predYes = 0
+predNo = 0
+correctLabel = 0
+total = len(newDF2)
+for row in range(0, len(newDF2)):
+    if newDF2['default'][row] == newDF2['predict_label'][row]:
+        correctLabel += 1
+accuracy = correctLabel / total
+accuracy
 
 
