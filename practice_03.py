@@ -419,7 +419,7 @@ class Traverse:
             matchCount = 0
             for rule in rules:
                 print('\tmatches:', matchCount, 'of', len(self.ruleDict[rule].keys()), 'ruleMatch=', ruleMatch)
-                kvPairs = list(testPath.ruleDict[rule].items())
+                kvPairs = list(self.ruleDict[rule].items()) # < < < < < < < < < < < < < < TYPO fixed.... changed testPath. to self.
                 for pair in kvPairs:
                     testAttr = pair[0]
                     testVal = pair[1]
@@ -483,7 +483,10 @@ myTree2 = makeTree(dfTrain, attributes, 'default', 0)
 testPath2 = Traverse(myTree2)
 testPath2.traverse(myTree2)   
 testPath2.ruleDict
-newDF2 = testPath2.makeLabels(dfTest) # --- test fails here...KeyError: 18 - makelabels method - kvPairs = list(testPath.ruleDict[rule].items())...previous test had 17 keys
-newDF2 = testPath2.makeLabels(dfTrain)
+newDF2 = testPath2.makeLabels(dfTest) 
+newDF2.head()
+newDF2.tail()
+
+
 
 
