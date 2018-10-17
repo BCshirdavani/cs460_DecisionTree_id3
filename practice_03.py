@@ -359,7 +359,8 @@ testNoMaskShorter.sum()
 
 # paths = trav(myTree)         
 # paths
-            
+       
+#======================================================================= Class Start     
 class Traverse:
     def __init__(self, dicIN):
         self.treeDic = dicIN
@@ -384,7 +385,6 @@ class Traverse:
                     print('~~~ yes found...')
                     self.tempList.append(children[x])       # NEW
                     tempString = ''
-                    #------------------------------------------------------------ parse if conditions here ----------
                     i = 0
                     size = len(self.tempList)
                     for tok in self.tempList:
@@ -406,9 +406,42 @@ class Traverse:
                     print('~~~~leaf at no...')
         print('\n~*~*~*~*~* RETURNING LIST ~*~*~*~')
 
+    # method returns a new data frame with predicted label column
+    #****************************************** ERROR! my rule loop checks for ALL rules to match...needs to break after finding 1 match
+    def makeLabels(self, data):
+        # initialize a new predicted label col to be all 'no'
+        df = data[:]
+        df['predict_label'] = 'no'
+        rules = list(self.ruleDict.keys())
+        # for each row, apply every rule
+        for rowNum in range(0, len(df)):
+            print('at row', rowNum)
+            # check each rule on this row..initialize test bool = True, and becomes false as soon as a condition fails to meet
+            ruleMatch = True
+            failCount = 0
+            for rule in rules:
+                # extract an pair attribute value pair
+                kvPairs = list(testPath.ruleDict[rule].items())
+                # check 1 attribute at a time within this rule, on this row
+                for pair in kvPairs:
+                    print('pair:', pair)
+                    testAttr = pair[0]
+                    testVal = pair[1]
+                    # if does not match rule values, test is False, and value remains at 'no'
+                    if df[pair[0]][rowNum] != pair[1]:
+#                    if df[testAttr][rowNum] != testVal:
+                        print('\t',df[pair[0]][rowNum], '!=', pair[1])
+                        ruleMatch = False
+            # if ruleMatch is true, this matches the rule path, and we make label = 'yes'
+            if ruleMatch == True:
+                print('\t\ttrue match')
+                df['predict_label'][rowNum] = 'yes'
+        return df
 
         
-    
+        
+#======================================================================= Class End
+        
 testPath = Traverse(myTree)
 testPath.traverse(myTree)   
 testPath.ruleDict
@@ -438,14 +471,9 @@ for rule in rules:
         print('if', pair[0], ' = ', pair[1])
         
 
-#==========================================================================
-# make function that uses technique above, and applies conditions to columns 
-# of a data frame, then labels a new column as yes 
-# (default will be no, if conditions not met)
 
-
-
-
+newDF = testPath.makeLabels(dfTrain)
+newDF
 
 
 
