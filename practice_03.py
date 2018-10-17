@@ -415,10 +415,36 @@ testPath.ruleDict
 testPath.ruleDict[0]
 testPath.ruleDict[1]
 testPath.ruleDict[2]
-testPath.ruleDict[3]
-testPath.ruleDict[4]
-testPath.ruleDict[5]
-testPath.ruleDict[6]
+
+
+#==========================================================================
+# parsing and displaying the 'if attribute =' path for each yes leaf
+testPath.ruleDict[0].items()
+x = list(testPath.ruleDict[0].items())
+x
+x[0][0]
+x[0][1]
+x[1]
+len(x)
+
+testPath.ruleDict.keys()
+len(testPath.ruleDict.keys())
+rules = list(testPath.ruleDict.keys())
+rules
+for rule in rules:
+    print('path', rule, ':')
+    kvPairs = list(testPath.ruleDict[rule].items())
+    for pair in kvPairs:
+        print('if', pair[0], ' = ', pair[1])
+        
+
+#==========================================================================
+# make function that uses technique above, and applies conditions to columns 
+# of a data frame, then labels a new column as yes 
+# (default will be no, if conditions not met)
+
+
+
 
 
 
