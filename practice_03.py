@@ -27,9 +27,9 @@ pd.set_option('expand_frame_repr', False)
 #----------------------------------------------------------   import the data
 print(os.getcwd())
 # MacBook
-#df = pd.read_csv('/Users/shymacbook/Documents/BC/cs460_ML/HW/cs460_DecisionTree_id3/credit.csv')
+df = pd.read_csv('/Users/shymacbook/Documents/BC/cs460_ML/HW/cs460_DecisionTree_id3/credit.csv')
 # iMac
-df = pd.read_csv('/Users/shimac/Documents/ComputerSci/cs460_ML/hw01/cs460_DecisionTree_id3/credit.csv')
+# df = pd.read_csv('/Users/shimac/Documents/ComputerSci/cs460_ML/hw01/cs460_DecisionTree_id3/credit.csv')
 
 #============================================================================
 # ----------------------------------------------------------  check out the data
@@ -47,9 +47,9 @@ df.age.unique()
 
 #============================================================================
 #----------------------------------------------------------   bucket the continuous variables
-#df2 = pd.read_csv('/Users/shymacbook/Documents/BC/cs460_ML/HW/cs460_DecisionTree_id3/credit.csv')
+df2 = pd.read_csv('/Users/shymacbook/Documents/BC/cs460_ML/HW/cs460_DecisionTree_id3/credit.csv')
 # iMac
-df2 = pd.read_csv('/Users/shimac/Documents/ComputerSci/cs460_ML/hw01/cs460_DecisionTree_id3/credit.csv')
+# df2 = pd.read_csv('/Users/shimac/Documents/ComputerSci/cs460_ML/hw01/cs460_DecisionTree_id3/credit.csv')
 # bucket the age bins
 ageBins = [18, 27, 33, 42, 100]
 ageLabels = ['19-27', '27-33', '33-42', '42-100']

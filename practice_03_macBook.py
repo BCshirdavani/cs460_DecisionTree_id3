@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Created on Tue Oct 16 19:31:32 2018
+
+@author: shimac
+"""
+
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
 Created on Tue Oct  9 13:10:10 2018
 @author: shymacbook
 """
@@ -18,7 +26,10 @@ pd.set_option('expand_frame_repr', False)
 #============================================================================
 #----------------------------------------------------------   import the data
 print(os.getcwd())
+# MacBook
 df = pd.read_csv('/Users/shymacbook/Documents/BC/cs460_ML/HW/cs460_DecisionTree_id3/credit.csv')
+# iMac
+# df = pd.read_csv('/Users/shimac/Documents/ComputerSci/cs460_ML/hw01/cs460_DecisionTree_id3/credit.csv')
 
 #============================================================================
 # ----------------------------------------------------------  check out the data
@@ -37,6 +48,8 @@ df.age.unique()
 #============================================================================
 #----------------------------------------------------------   bucket the continuous variables
 df2 = pd.read_csv('/Users/shymacbook/Documents/BC/cs460_ML/HW/cs460_DecisionTree_id3/credit.csv')
+# iMac
+# df2 = pd.read_csv('/Users/shimac/Documents/ComputerSci/cs460_ML/hw01/cs460_DecisionTree_id3/credit.csv')
 # bucket the age bins
 ageBins = [18, 27, 33, 42, 100]
 ageLabels = ['19-27', '27-33', '33-42', '42-100']
@@ -144,10 +157,10 @@ def gain(df, attribute, targetAttr = 'default'):
 
 #============================================================================
 #----------------------------------------------------------     getMax function
-def getMaxGainAttr(df, attributes): 
+def getMaxGainAttr(df, attributes, target): 
     gainDict = {}
     for x in attributes:
-        gainDict[x] = gain(df, attribute = x, targetAttr = 'default')
+        gainDict[x] = gain(df, attribute = x, targetAttr = target)
     maxGainAttribute = max(gainDict, key=gainDict.get)
     return maxGainAttribute
 
@@ -155,7 +168,7 @@ def getMaxGainAttr(df, attributes):
 #============================================================================
 #----------------------------------------------------------     return majority value method
 def majority(df, target = 'default'):
-    df.reset_index(drop=True)
+    df = df.reset_index(drop=True)
     values = {'yes':0, 'no':0}                                  # This will only work for yes/no target values
     for x in range(0, len(df.index)):
         values[(df[target][x])] += 1.0
@@ -195,9 +208,6 @@ class Node:
         self.setValue(val)
         self.genChildren(dictionary)
     
-    def __str__(self):
-        return str(self.value)
-    
     def setValue(self, val):
         self.value = val
         
@@ -211,37 +221,6 @@ class Node:
 
 #============================================================================
 #----------------------------------------------------------     Tree Function
-# def tree(dataIN, attributesIN, dictIN, target = 'default', recursion = 0):
-#     # if no more attributes
-#     #   ...
-#     # if all records in data have same label
-#     #   return that label
-#     #
-#     dict = dictIN
-#     if len(dataIN.index) > 1:                                  # if we still have attributes listed
-#         rec = recursion + 1
-#         attributes = attributesIN[:]
-#         df = dataIN
-#         maxAttr = getMaxGainAttr(df, attributes)                # find max gain attribute
-#         newAttr = attributes[:]
-#         newAttr.remove(maxAttr)                                    # remove attribute for next recurssion
-#         dict[rec] += ' ' + maxAttr
-#         print('\t\t\tnewAttr = ',newAttr)
-#         print('\trecursion ', rec, ' attribute with most gain is', maxAttr, 'with gain of', gain(df, attribute = maxAttr))
-#         for attr in df[maxAttr].unique():                       # for each version in max attribute
-#             print('\t\t',attr)
-#             mask = df[maxAttr] == attr                               # subset df for recurssion
-#             subset_df = df[mask]
-#             subset_df = subset_df.reset_index(drop=True)
-#             if len(newAttr) >= 1:
-#                 tree(dataIN = subset_df, attributesIN = newAttr, target = 'default', recursion = rec, dictIN = dict)
-#             else:
-#                 print('\n\n\t\t\trecursion:',rec)
-#                 return dict
-#     else:
-#         return dict
-        
-    
     
 
 def makeTree(data, attributes, target, recursion):
@@ -263,7 +242,7 @@ def makeTree(data, attributes, target, recursion):
         print('~~~~~~~~~~~~~~~~~~~~ else: tree recursion ~~~~~~~~~~~~~~ 2')
         # choose next best attribute to label data
         # best = getMaxGainAttr(data, target)                                     # target = 'default'
-        best = getMaxGainAttr(data, attributes)  
+        best = getMaxGainAttr(data, attributes, target)  
         # create new tree with best attribute as root
         tree = {best:{}}
         # create subtree for each value in best attribute field
@@ -320,72 +299,150 @@ dfTest[testNoMaskShorter]['default']      # correctly shows no for this 1 instan
 dfTest[testNoMaskShorter]
 testNoMaskShorter.sum()
 
-# traverse practice method
-# list is like a stack, to show the path to the yes leaves
-# def trav(tree, ifList = [], pList = [], path = 0):
-#     print('~~~~~~tree keys: ', tree.keys())
-#     children = list(tree.keys())
-#     for x in range(0, len(children)):
-#         if children != None:
-#             if (tree.get(children[x]) != 'yes') & (tree.get(children[x]) != 'no'):
-#                 print('~~~~appending', children[x], 'to temp list')
-#                 ifList.append(children[x])                  # append this child to the ifList
-#                 trav(tree.get(children[x]),ifList)      # pass new ifList to the next sub traversal
-#             elif (tree.get(children[x]) == 'yes'):
-#                 print('~~~~leaf at YES...add to permanent path list')
-#                 tString = ''
-#                 for x in ifList:
-#                     tString = x + ' '
-#                 print('tString = ', tString)
-#                 pList.append(tString)
-#                 path += 1
-#             elif (tree.get(children[x]) == 'no'):
-#                 print('~~~~leaf at no...pop path')
-#                 ifList.pop()
-#     return pList
 
-# paths = trav(myTree)         
-# paths
-            
+#======================================================================= Class Start     
 class Traverse:
     def __init__(self, dicIN):
         self.treeDic = dicIN
         self.path = 0
         self.tempList = []
         self.pathList = []
+        self.rulesList = []
+        self.temp = ''
+        self.ruleDict = {}
         
     def traverse(self, tree):
-        print('~~~~~~tree keys: ', tree.keys())
+        print('~~~ tree keys: ', tree.keys())
         children = list(tree.keys())
         for x in range(0, len(children)):
+            print('\t~~~ x = ', x)
             if children != None:
                 if (tree.get(children[x]) != 'yes') & (tree.get(children[x]) != 'no'):
-                    print('~~~~appending', children[x], 'to temp list')
                     self.tempList.append(children[x])                  # append this child to the ifList
-                    print('\ttempList = ', self.tempList)
                     # traverse(tree = tree.get(children[x]))             # sub tree traversal
                     self.traverse(tree = tree.get(children[x])) 
                 elif (tree.get(children[x]) == 'yes'):
-                    print('~~~~leaf at YES...add to permanent path list, and pop() temp path')
+                    print('~~~ yes found...')
                     self.tempList.append(children[x])       # NEW
                     tempString = ''
-                    #------------------------------------------------------------ parse if conditions here ----------
-                    for x in self.tempList:
-                        tempString += (x + ' ')
-                    print('v^v^v^v^\tTemp String = ', tempString)
+                    i = 0
+                    size = len(self.tempList)
+                    for tok in self.tempList:
+                        if i % 2 == 0:
+                            self.temp = tok
+                            i += 1
+                        elif i % 2 == 1:
+                            if i == 1:
+                                self.ruleDict[self.path] = {self.temp : tok}
+                                i += 1
+                            else:
+                                self.ruleDict[self.path].update({self.temp : tok})
+                                i += 1
                     self.pathList.append(tempString)                    # save this path in the list of permanent paths
                     self.path += 1                                      # +1 to path counter
-                    if len(self.tempList) < 1:
-                        self.tempList.pop()                                 # pop and backtrack temp path
+
+                    self.tempList.pop() 
                 elif (tree.get(children[x]) == 'no'):
-                    print('~~~~leaf at no...pop() back')
-                    self.tempList.pop()                                 # pop and backtrack temp path
+                    print('~~~~leaf at no...')
         print('\n~*~*~*~*~* RETURNING LIST ~*~*~*~')
+
+    # method returns a new data frame with predicted label column
+    def makeLabels(self, data):
+        # initialize a new predicted label col to be all 'no'
+        df = data[:]
+        df['predict_label'] = 'no'
+        rules = list(self.ruleDict.keys())
+        # for each row, apply every rule
+        for rowNum in range(0, len(df)):
+            print('at row', rowNum)
+            ruleMatch = False
+            matchCount = 0
+            for rule in rules:
+                print('\tmatches:', matchCount, 'of', len(self.ruleDict[rule].keys()), 'ruleMatch=', ruleMatch)
+                kvPairs = list(self.ruleDict[rule].items()) # < < < < < < < < < < < < < < TYPO fixed.... changed testPath. to self.
+                for pair in kvPairs:
+                    testAttr = pair[0]
+                    testVal = pair[1]
+                    if df[testAttr][rowNum] != testVal:
+                        ruleMatch = False
+                    elif df[testAttr][rowNum] == testVal:
+                        matchCount += 1
+                if matchCount == len(self.ruleDict[rule].keys()):
+                    ruleMatch = True
+                    print('\t\ttrue match')
+                    df['predict_label'][rowNum] = 'yes'
+            if ruleMatch == True:                       # redundant section...remove
+                print('\t\ttrue match')                 # redundant section...remove
+                df['predict_label'][rowNum] = 'yes'     # redundant section...remove
+        return df
 
         
         
-    
+#======================================================================= Class End
+myTree
 testPath = Traverse(myTree)
 testPath.traverse(myTree)   
-testPath.pathList
-testPath.path
+testPath.ruleDict
+testPath.ruleDict[0]
+testPath.ruleDict[1]
+testPath.ruleDict[2]
+len(testPath.ruleDict[0].keys())
+
+newDF = testPath.makeLabels(dfTest)             # row 98 shows a match...3 of 3 conditions for one of the rules...
+newDF.tail()
+
+
+
+
+
+
+#==========================================================================
+# parsing and displaying the 'if attribute =' path for each yes leaf
+testPath.ruleDict[0].items()
+x = list(testPath.ruleDict[0].items())
+x
+x[0][0]
+x[0][1]
+x[1]
+len(x)
+
+testPath.ruleDict.keys()
+len(testPath.ruleDict.keys())
+rules = list(testPath.ruleDict.keys())
+rules
+for rule in rules:
+    print('path', rule, ':')
+    kvPairs = list(testPath.ruleDict[rule].items())
+    for pair in kvPairs:
+        print('if', pair[0], ' = ', pair[1])
+
+
+#========================================================================== TESTING
+myTree2 = makeTree(dfTrain, attributes, 'default', 0)
+testPath2 = Traverse(myTree2)
+testPath2.traverse(myTree2)   
+testPath2.ruleDict
+newDF2 = testPath2.makeLabels(dfTrain) 
+newDF2.head()
+newDF2.tail()
+
+# accuracy against dfTest
+yesCount = 0
+noCount = 0
+predYes = 0
+predNo = 0
+correctLabel = 0
+total = len(newDF2)
+for row in range(0, len(newDF2)):
+    if newDF2['default'][row] == newDF2['predict_label'][row]:
+        correctLabel += 1
+accuracy = correctLabel / total
+accuracy
+
+
+#========================================================================== TESTING book example
+bookData = pd.read_csv('/Users/shymacbook/Documents/BC/cs460_ML/HW/cs460_DecisionTree_id3/bookData.csv')
+bookData
+bookAttributes = ['Outlook', 'Temperature', 'Humidity', 'Wind']
+bookTarget = 'PlayTennis'
+bookTree = makeTree(dfTrain, attributes, 'PlayTennis', 0)
