@@ -106,16 +106,13 @@ def makeTree(data, attributes, target, recursion):
     default = majority(data, target)
     # id dataset is empty, or attributes list is empty -> return default
     if ((len(data.index)) <=0) or ((len(attributes)) <= 0):
-        print('~~~~~~~~~~~~~~~~~~~~ LEAF: no more data or attributes ~~~~~~~~~~~~~~ 0')
         return default
     # if all records in subset show the same classification, return that label
     # checking if only 1 unique value exists in target col
     elif (len(data[target].unique())) <= 1:
-        print('~~~~~~~~~~~~~~~~~~~~ LEAF: only 1 unique default value ~~~~~~~~~~~~~~ 1')
         onlyValue = data[target].unique()[0]
         return onlyValue
     else:
-        print('~~~~~~~~~~~~~~~~~~~~ else: tree recursion ~~~~~~~~~~~~~~ 2')
         # choose next best attribute to label data
         # best = getMaxGainAttr(data, target)                                     # target = 'default'
         best = getMaxGainAttr(data, attributes, target)  
@@ -235,9 +232,10 @@ bookPath.ruleDict
 bookPredict = bookPath.makeLabels(bookData)
 bookPredict
 
+correctLabel = 0
 total = len(bookPredict)
 for row in range(0, len(bookPredict)):
-    if newDF2['default'][row] == bookPredict['predict_label'][row]:
+    if bookPredict['PlayTennis'][row] == bookPredict['predict_label'][row]:
         correctLabel += 1
 accuracy = correctLabel / total
 accuracy
