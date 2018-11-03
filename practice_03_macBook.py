@@ -221,8 +221,6 @@ class Node:
 
 #============================================================================
 #----------------------------------------------------------     Tree Function
-    
-
 def makeTree(data, attributes, target, recursion):
     # print(data[target].unique())
     recursion += 1
@@ -359,7 +357,7 @@ class Traverse:
             matchCount = 0
             for rule in rules:
                 print('\tmatches:', matchCount, 'of', len(self.ruleDict[rule].keys()), 'ruleMatch=', ruleMatch)
-                kvPairs = list(self.ruleDict[rule].items()) # < < < < < < < < < < < < < < TYPO fixed.... changed testPath. to self.
+                kvPairs = list(self.ruleDict[rule].items()) 
                 for pair in kvPairs:
                     testAttr = pair[0]
                     testVal = pair[1]
