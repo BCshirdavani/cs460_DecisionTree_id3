@@ -4,6 +4,8 @@
 Created on Mon Oct 22 10:48:53 2018
 
 @author: shymacbook
+
+ - - - - NODES
 """
 import pandas as pd
 import os
