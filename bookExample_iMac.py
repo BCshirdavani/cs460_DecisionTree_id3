@@ -106,16 +106,13 @@ def makeTree(data, attributes, target, recursion):
     default = majority(data, target)
     # id dataset is empty, or attributes list is empty -> return default
     if ((len(data.index)) <=0) or ((len(attributes)) <= 0):
-        print('~~~~~~~~~~~~~~~~~~~~ LEAF: no more data or attributes ~~~~~~~~~~~~~~ 0')
         return default
     # if all records in subset show the same classification, return that label
     # checking if only 1 unique value exists in target col
     elif (len(data[target].unique())) <= 1:
-        print('~~~~~~~~~~~~~~~~~~~~ LEAF: only 1 unique default value ~~~~~~~~~~~~~~ 1')
         onlyValue = data[target].unique()[0]
         return onlyValue
     else:
-        print('~~~~~~~~~~~~~~~~~~~~ else: tree recursion ~~~~~~~~~~~~~~ 2')
         # choose next best attribute to label data
         # best = getMaxGainAttr(data, target)                                     # target = 'default'
         best = getMaxGainAttr(data, attributes, target)  
@@ -149,39 +146,55 @@ class Traverse:
         self.rulesList = []
         self.temp = ''
         self.ruleDict = {}
-    
-    # ---- redo of traverse ----
-    # call this with empty list first
-    def traverse(self, tree, recList = [], tToken = ''):
+        
+        
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ERROR
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ rulesDict is fucking up
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+    '''
+    bookPath.ruleDict
+    Out[92]: 
+    {0: {'Outlook': 'Sunny', 'Humidity': 'Normal'},
+     1: {'Outlook': 'Sunny', 'Humidity': 'Overcast'},
+     2: {'Outlook': 'Sunny', 'Humidity': 'Rain', 'Wind': 'Weak'}}
+    '''
+    # Overcase and Rain, should be for Outlook, not Humidity...
+    def traverse(self, tree):
+        print('~~~ tree keys: ', tree.keys())
         children = list(tree.keys())
-        for child in range(0, len(children)):
-            if (child != 'yes') & (child != 'no'):
-                self.tempList.append(child)
-                recList.append(child)
-                newList = []
-                newList = recList
-                newTree = {}
-                newTree = tree[child]
-                self.traverse(newTree, newList)
-            elif (child == 'yes'):
-                i = 0
-                for tok in recList:
-                    if i % 2 == 0:
-                        tToken = tok
-                        i += 1
-                    elif i % 2 == 1:
-                        if i == 1:
-                            self.ruleDict[self.path] = {tToken : tok}
+        for x in range(0, len(children)):
+            print('\t~~~ x = ', x)
+            if children != None:
+                if (tree.get(children[x]) != 'yes') & (tree.get(children[x]) != 'no'):
+                    self.tempList.append(children[x])                  # append this child to the ifList
+                    # traverse(tree = tree.get(children[x]))             # sub tree traversal
+                    self.traverse(tree = tree.get(children[x])) 
+                elif (tree.get(children[x]) == 'yes'):
+                    print('~~~ yes found...')
+                    self.tempList.append(children[x])       # NEW
+                    tempString = ''
+                    i = 0
+                    size = len(self.tempList)
+                    for tok in self.tempList:
+                        if i % 2 == 0:
+                            self.temp = tok
                             i += 1
-                        else:
-                            self.ruleDict[self.path].update({tToken : tok})
-                            i += 1
-                self.path += 1                            # +1 to path counter
-                self.tempList.pop() 
-                self.tempList.pop()                     # adding a SECOND POP to fix error on path after finding a yes - - -
-            elif (child == 'no'):
-                print('...no leaf')
-                    
+                        elif i % 2 == 1:
+                            if i == 1:
+                                self.ruleDict[self.path] = {self.temp : tok}
+                                i += 1
+                            else:
+                                self.ruleDict[self.path].update({self.temp : tok})
+                                i += 1
+                    self.pathList.append(tempString)                    # save this path in the list of permanent paths
+                    self.path += 1                                      # +1 to path counter
+
+                    self.tempList.pop() 
+                elif (tree.get(children[x]) == 'no'):
+                    print('~~~~leaf at no...')
+        print('\n~*~*~*~*~* RETURNING LIST ~*~*~*~')
+
+
     # method returns a new data frame with predicted label column
     def makeLabels(self, data):
         # initialize a new predicted label col to be all 'no'
@@ -212,16 +225,7 @@ class Traverse:
                 df['predict_label'][rowNum] = 'yes'     # redundant section...remove
         return df
 
-
-
-
-
-
-
-
-
 bookTree = makeTree(bookData, bookAttributes, bookTarget, 0)
-bookTree
 bookPath = Traverse(bookTree)
 bookPath.traverse(bookTree)
 bookPath.ruleDict
@@ -239,36 +243,12 @@ accuracy
 
 
 
-bookTree2 = makeTree(bookData, bookAttributes, bookTarget, 0)
-bookTree2
-bookPath2 = Traverse(bookTree)
-bookPath2.traverseNEW(bookTree)
 
 
-# -------------------------------------------------- dictionary depth function
-def dictDepth(d, level=1):
-    if not isinstance(d, dict) or not d:
-        return level
-    return max(dictDepth(d[k], level + 1) for k in d)
 
 
-# ---------------------------------------------------------------------- NODE 
-class Node:
-    def __init__(self, dicIN):
-        self.name = list(dicIN.keys())[0]
-        self.kidCount = len(list(dicIN[self.name].keys()))
-        self.depth = dictDepth(dicIN)
-        self.leaf = self.kidCount == 0
-        self.kids = list(dicIN[self.name].keys())
-        self.yes = self.name == 'yes'
-        
-# ---------------------------------------------------------------------- TREE
-class Tree:
-    def __init__(self, dictInput):
-        self.root = Node(dictInput)
-        for level in range(0, root.depth):
-            # put all the child nodes and trees in...
-                        
+
+
 
 
 
